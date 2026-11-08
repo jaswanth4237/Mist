@@ -95,6 +95,7 @@ The Docker stack exposes PostgreSQL on port `5433`, the API on `3000`, and the f
 | `SEARCH_PROVIDER` | No | `tavily` | `tavily` or `brave` |
 | `TAVILY_API_KEY` | Provider-dependent | — | Tavily API key |
 | `BRAVE_SEARCH_API_KEY` | Provider-dependent | — | Brave Search API key |
+| `CELESTO_API_KEY` | Optional | — | Celesto Cloud Computers API key |
 | `API_PORT` | No | `3000` | Backend port |
 | `CORS_ORIGIN` | No | `http://localhost:5173` | Allowed frontend origin |
 | `SEARCH_TIMEOUT_MS` | No | `20000` | External search timeout |
@@ -102,6 +103,28 @@ The Docker stack exposes PostgreSQL on port `5433`, the API on `3000`, and the f
 | `LOG_LEVEL` | No | `info` | Pino log level |
 
 Never commit `.env`, API keys, or other credentials. Use `.env.example` as the safe configuration template.
+
+## Celesto Cloud Computers
+
+Mist can connect to Celesto Cloud Computers from the backend. The API key must stay server-side; never place it in frontend code or commit it to `.env.example`.
+
+1. Revoke any Celesto key that was shared in chat or another public location.
+2. Create a new key in the Celesto dashboard with only the permissions required to create, run, and delete computers.
+3. Configure it locally:
+
+   ```powershell
+   Copy-Item .env.example .env -ErrorAction SilentlyContinue
+   Add-Content .env "`nCELESTO_API_KEY=your-new-key"
+   ```
+
+4. Install dependencies and run the Windows smoke test:
+
+   ```powershell
+   npm install
+   npm run celesto:smoke --workspace=@clientfinder/api
+   ```
+
+The smoke test creates a temporary default computer, runs `uname -a`, prints the result, and deletes the computer in a `finally` block. Celesto Cloud Computers do not require Docker Desktop on the Windows host; Docker remains available for running Mist and PostgreSQL locally.
 
 ## Commands
 

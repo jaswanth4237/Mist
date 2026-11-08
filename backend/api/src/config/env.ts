@@ -1,5 +1,19 @@
-import "dotenv/config";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import dotenv from "dotenv";
 import { z } from "zod";
+
+const envPaths = [
+    resolve(process.cwd(), ".env"),
+    resolve(process.cwd(), "..", "..", ".env"),
+];
+
+const envPath = envPaths.find((candidate) => existsSync(candidate));
+if (envPath) {
+    dotenv.config({ path: envPath });
+} else {
+    dotenv.config();
+}
 
 const envSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
@@ -8,6 +22,7 @@ const envSchema = z.object({
     SEARCH_PROVIDER: z.enum(["tavily", "brave"]).default("tavily"),
     TAVILY_API_KEY: z.string().optional(),
     BRAVE_SEARCH_API_KEY: z.string().optional(),
+    CELESTO_API_KEY: z.string().optional(),
     LLM_PROVIDER: z.enum(["none", "openai"]).default("none"),
     LLM_API_KEY: z.string().optional(),
     LLM_MODEL: z.string().optional(),

@@ -13,9 +13,11 @@
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
         "db:migrate:deploy": "prisma migrate deploy",
-        "db:studio": "prisma studio"
+        "db:studio": "prisma studio",
+        "celesto:smoke": "tsx src/scripts/celesto-smoke.ts"
     },
     "dependencies": {
+        "@celestoai/sdk": "^0.1.6",
         "@clientfinder/shared": "*",
         "@prisma/client": "^5.10.2",
         "cors": "^2.8.5",
