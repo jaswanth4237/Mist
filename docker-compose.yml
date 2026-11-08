@@ -1,0 +1,62 @@
+# Docker Compose v2 (no version key needed)
+services:
+  # ---------- PostgreSQL ----------
+  postgres:
+    image: postgres:16-alpine
+    container_name: clientfinder_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: clientfinder
+    ports:
+      - "5433:5432"               # host 5433 → container 5432 (avoids conflicts)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------- API ----------
+  api:
+    build:
+      context: .
+      dockerfile: backend/api/Dockerfile
+    container_name: clientfinder_api
+    restart: unless-stopped
+    env_file:
+      - .env.docker               # Docker‑specific env vars
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/v1/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ---------- Front‑end ----------
+  web:
+    build:
+      context: .
+      dockerfile: frontend/web/Dockerfile
+    container_name: clientfinder_web
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5173/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:

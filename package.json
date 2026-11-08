@@ -1,0 +1,25 @@
+{
+  "name": "clientfinder-ai",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Mist — Find genuine potential customers using real web searches",
+  "workspaces": [
+    "frontend/web",
+    "backend/api",
+    "backend/shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=backend/api\" \"npm run dev --workspace=frontend/web\"",
+    "build": "npm run build --workspace=backend/api && npm run build --workspace=frontend/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspace=frontend/web",
+    "db:generate": "npm run db:generate --workspace=backend/api",
+    "db:migrate": "npm run db:migrate --workspace=backend/api",
+    "db:studio": "npm run db:studio --workspace=backend/api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

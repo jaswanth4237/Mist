@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #FAFAFA;
+    --bg-card: #FFFFFF;
+    --bg-hover: #F3F4F6;
+    --border: #E5E7EB;
+    --text-primary: #0A0A0A;
+    --text-secondary: #6B7280;
+    --accent-red: #DC2626;
+    --accent-green: #15803D;
+    --sidebar-active-bg: #FEF2F2;
+    --sidebar-active-text: #DC2626;
+  }
+
+  .dark {
+    --bg-primary: #050706;
+    --bg-card: #0b100d;
+    --bg-hover: #111c15;
+    --border: #24352a;
+    --text-primary: #F9FAFB;
+    --text-secondary: #9aa99f;
+    --accent-red: #DC2626;
+    --accent-green: #22c55e;
+    --sidebar-active-bg: #0b6b32;
+    --sidebar-active-text: #ffffff;
+  }
+
+  * {
+    @apply border-[var(--border)];
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: "Inter", system-ui, sans-serif;
+    @apply antialiased;
+  }
+
+  .dark body {
+    background-image:
+      radial-gradient(circle at 75% -10%, rgba(34, 197, 94, 0.1), transparent 30rem),
+      linear-gradient(135deg, rgba(13, 30, 19, 0.2), transparent 45%);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
+           bg-brand-green text-white hover:bg-brand-green-hover
+           transition-colors duration-150 focus:outline-none focus:ring-2
+           focus:ring-brand-green focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)] disabled:opacity-50
+           disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
+           border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)]
+           hover:bg-[var(--bg-hover)] transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
+           bg-brand-red text-white hover:bg-brand-red-hover
+           transition-colors duration-150 focus:outline-none focus:ring-2
+           focus:ring-brand-red focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5
+           transition-shadow duration-150;
+  }
+
+  .dark .card {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  }
+
+  .card-hover {
+    @apply card hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 rounded-lg border border-[var(--border)]
+           bg-[var(--bg-card)] text-[var(--text-primary)]
+           placeholder:text-[var(--text-secondary)]
+           focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent
+           transition-colors duration-150 text-sm;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-[var(--text-primary)] mb-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-red {
+    @apply badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400;
+  }
+
+  .badge-green {
+    @apply badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400;
+  }
+
+  .badge-yellow {
+    @apply badge bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-500;
+  }
+
+  .badge-gray {
+    @apply badge bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400;
+  }
+
+  .badge-blue {
+    @apply badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold text-[var(--text-primary)];
+  }
+
+  .text-muted {
+    @apply text-[var(--text-secondary)] text-sm;
+  }
+
+  .divider {
+    @apply border-t border-[var(--border)] my-4;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+           text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]
+           hover:text-[var(--text-primary)] transition-colors duration-150;
+  }
+
+  .nav-link-active {
+    @apply nav-link bg-[var(--sidebar-active-bg)] text-[var(--sidebar-active-text)]
+           hover:bg-[var(--sidebar-active-bg)];
+  }
+
+  .dark .nav-link-active {
+    box-shadow: 0 0 18px rgba(34, 197, 94, 0.16);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}

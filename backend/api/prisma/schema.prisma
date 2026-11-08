@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ServiceType {
+  WEBSITE_DEVELOPMENT
+  APPLICATION_DEVELOPMENT
+  VIDEO_EDITING
+}
+
+enum HiringIntent {
+  EXPLICIT
+  STRONG_SIGNAL
+  POSSIBLE
+  UNKNOWN
+}
+
+enum OpportunityType {
+  EXPLICIT_REQUEST
+  CREDIBLE_OPPORTUNITY
+}
+
+enum SearchStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  PARTIAL
+  FAILED
+}
+
+model SearchRun {
+  id           String       @id @default(cuid())
+  service      ServiceType
+  location     String?
+  keywords     String?
+  status       SearchStatus @default(PENDING)
+  provider     String
+  resultCount  Int          @default(0)
+  errorCode    String?
+  errorMessage String?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime     @default(now())
+  leads        SearchLead[]
+
+  @@index([createdAt])
+  @@index([status, createdAt])
+}
+
+model Lead {
+  id           String       @id @default(cuid())
+  companyName  String?
+  websiteUrl   String?
+  domain       String?
+  location     String?
+  service      ServiceType
+  description  String?
+  industry     String?
+  requestedService String?
+  contactDetails String?
+  opportunityType OpportunityType @default(CREDIBLE_OPPORTUNITY)
+  requestDate  DateTime?
+  hiringIntent HiringIntent @default(UNKNOWN)
+  matchScore   Int          @default(0)
+  scoreReasons Json?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  sources      LeadSource[]
+  searchRuns   SearchLead[]
+  savedBy      SavedLead?
+
+  @@index([service, matchScore])
+  @@index([domain])
+}
+
+model LeadSource {
+  id           String    @id @default(cuid())
+  leadId       String
+  lead         Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  sourceUrl    String
+  sourceTitle  String?
+  sourceName   String?
+  snippet      String?
+  evidenceText String?
+  evidenceType String?
+  publishedAt  DateTime?
+  discoveredAt DateTime  @default(now())
+
+  @@unique([leadId, sourceUrl])
+  @@index([sourceUrl])
+}
+
+model SearchLead {
+  searchRunId String
+  leadId      String
+  searchRun   SearchRun @relation(fields: [searchRunId], references: [id], onDelete: Cascade)
+  lead        Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@id([searchRunId, leadId])
+}
+
+model SavedLead {
+  id        String   @id @default(cuid())
+  leadId    String   @unique
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model AppSetting {
+  id        String   @id @default("default")
+  theme     String   @default("dark")
+  updatedAt DateTime @updatedAt
+}
